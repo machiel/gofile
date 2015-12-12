@@ -82,3 +82,7 @@ implementations, like AWS S3 or FTP.
 
 Other than that, as mentioned earlier, currently there are 0 tests written,
 so if you want you can help out with that stuff :)!
+
+Other examples:
+* Return streams instead of data arrays
+* Visibility settings (public/private)
