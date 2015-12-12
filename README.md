@@ -54,6 +54,7 @@ import (
 
 
 func main() {
+    // godropbox initialization
     fs, err := gofile.New("dropbox", map[string]string{
         "client_id":     "",
         "client_secret": "",
@@ -63,6 +64,13 @@ func main() {
     handleError(err)
 
     err = fs.Write("myfile.txt", "Hello world!")
+
+    handleError(err)
+
+    // golocal initialization
+    localFs, err := gofile.New("local", map[string]string{
+        "rootDir" : "/tmp",
+    })
 
     handleError(err)
 }
