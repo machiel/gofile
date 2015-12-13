@@ -42,13 +42,11 @@ func TestNew(t *testing.T) {
 }
 
 type driverOne struct {
-	Writer
-	Reader
+	Driver
 }
 
 type driverTwo struct {
-	Writer
-	Reader
+	Driver
 }
 
 func buildOne(config map[string]string) (Driver, error) {

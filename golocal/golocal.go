@@ -25,7 +25,7 @@ func (c localDriver) absPath(path string) string {
 	return path
 }
 
-func (c localDriver) Has(path string) bool {
+func (c localDriver) Contains(path string) bool {
 	if _, err := os.Stat(c.absPath(path)); os.IsNotExist(err) {
 		return false
 	}

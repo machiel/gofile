@@ -32,7 +32,7 @@ func (d dropboxDriver) Read(path string) (io.ReadCloser, error) {
 	return content, nil
 }
 
-func (d dropboxDriver) Has(path string) bool {
+func (d dropboxDriver) Contains(path string) bool {
 	_, err := d.db.Metadata(path, false, false, "", "", 1)
 
 	if err != nil {
