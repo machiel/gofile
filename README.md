@@ -1,6 +1,8 @@
 # Overview
 [![Twitter](https://img.shields.io/badge/author-%40MachielMolenaar-blue.svg)](https://twitter.com/MachielMolenaar)
 [![GoDoc](https://godoc.org/github.com/Machiel/gofile?status.svg)](https://godoc.org/github.com/Machiel/gofile)
+[![Build Status](https://travis-ci.org/Machiel/gofile.svg?branch=master)](https://travis-ci.org/Machiel/gofile)
+[![Coverage Status](https://coveralls.io/repos/Machiel/gofile/badge.svg?branch=master&service=github)](https://coveralls.io/github/Machiel/gofile?branch=master)
 
 Gofile is a library that abstracts away the filesystem operations for you, and
 allows you to plug-in your own filesystem implementation.
