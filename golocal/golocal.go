@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/Machiel/gofile"
 )
@@ -15,11 +17,12 @@ type localDriver struct {
 	rootDir string
 }
 
-/**
- * @TODO: Check path concatenation (with or without trailing slash)
- */
 func (c localDriver) absPath(path string) string {
-	return c.rootDir + "/" + path
+	path, err := filepath.Abs(c.rootDir + "/" + path)
+	if err != nil {
+		log.Println(err)
+	}
+	return path
 }
 
 func (c localDriver) Has(path string) bool {
@@ -73,8 +76,11 @@ func (c localDriver) List(path string) ([]gofile.File, error) {
 	foundFiles := make([]gofile.File, len(files))
 
 	for i, file := range files {
+
+		fullPath, _ := filepath.Abs(dirname + "/" + file.Name())
+
 		foundFiles[i] = gofile.File{
-			Path:  fullPath(dirname, file.Name()),
+			Path:  fullPath,
 			IsDir: file.IsDir(),
 		}
 	}
@@ -149,8 +155,4 @@ func build(c map[string]string) (gofile.Driver, error) {
 
 func init() {
 	gofile.Register("local", build)
-}
-
-func fullPath(dir, file string) string {
-	return dir + "/" + file
 }
