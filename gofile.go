@@ -5,6 +5,7 @@ package gofile
 
 import (
 	"fmt"
+	"io"
 	"sync"
 )
 
@@ -27,17 +28,17 @@ func EmptyFileSet() []File {
 // Reader provides all the operations on the filesystem that read
 type Reader interface {
 	Has(path string) bool
-	Read(path string) ([]byte, error)
+	Read(path string) (io.ReadCloser, error)
 	List(path string) ([]File, error)
 }
 
 // Writer provides all the operations on the filesystem that changes the
 // filesystem
 type Writer interface {
-	Write(path string, contents []byte) error
+	Write(path string, data io.Reader) error
 	CreateDir(path string) error
 	DeleteDir(path string) error
-	Update(path string, contents []byte) error
+	Update(path string, data io.Reader) error
 	Rename(path, newPath string) error
 	Copy(path, target string) error
 	Delete(path string) error

@@ -3,10 +3,8 @@
 package godropbox
 
 import (
-	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 
 	"github.com/Machiel/gofile"
 	"github.com/stacktic/dropbox"
@@ -24,20 +22,14 @@ func (nc nopCloser) Close() error {
 	return nil
 }
 
-func (d dropboxDriver) Read(path string) ([]byte, error) {
+func (d dropboxDriver) Read(path string) (io.ReadCloser, error) {
 	content, _, err := d.db.Download(path, "", 0)
 
 	if err != nil {
-		return []byte{}, fmt.Errorf("godropbox: Could not read file on path '%s' (%s)", path, err)
+		return nil, fmt.Errorf("godropbox: Could not read file on path '%s' (%s)", path, err)
 	}
 
-	data, err := ioutil.ReadAll(content)
-
-	if err != nil {
-		return []byte{}, fmt.Errorf("godropbox: Could not read file on path '%s' (%s)", path, err)
-	}
-
-	return data, nil
+	return content, nil
 }
 
 func (d dropboxDriver) Has(path string) bool {
@@ -50,9 +42,9 @@ func (d dropboxDriver) Has(path string) bool {
 	return true
 }
 
-func (d dropboxDriver) write(path string, data []byte, overwrite bool) error {
-	input := nopCloser{bytes.NewReader(data)}
-	_, err := d.db.FilesPut(input, int64(len(data)), path, overwrite, "")
+func (d dropboxDriver) write(path string, data io.Reader, overwrite bool) error {
+	content := nopCloser{data}
+	_, err := d.db.FilesPut(content, 0, path, overwrite, "")
 	return err
 }
 
@@ -61,7 +53,7 @@ func (d dropboxDriver) delete(path string) error {
 	return err
 }
 
-func (d dropboxDriver) Write(path string, data []byte) error {
+func (d dropboxDriver) Write(path string, data io.Reader) error {
 	err := d.write(path, data, false)
 
 	if err != nil {
@@ -71,8 +63,8 @@ func (d dropboxDriver) Write(path string, data []byte) error {
 	return nil
 }
 
-func (d dropboxDriver) Update(path string, contents []byte) error {
-	err := d.write(path, contents, true)
+func (d dropboxDriver) Update(path string, data io.Reader) error {
+	err := d.write(path, data, true)
 
 	if err != nil {
 		return fmt.Errorf("godropbox: Could not update file '%s' (%s)", path, err)

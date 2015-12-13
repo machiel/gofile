@@ -33,11 +33,11 @@ func (c localDriver) Has(path string) bool {
 	return true
 }
 
-func (c localDriver) Read(path string) ([]byte, error) {
-	b, err := ioutil.ReadFile(c.absPath(path))
+func (c localDriver) Read(path string) (io.ReadCloser, error) {
+	b, err := os.Open(c.absPath(path))
 
 	if err != nil {
-		return b, fmt.Errorf("golocal: Unable to read file '%s' (%s)", path, err)
+		return b, fmt.Errorf("golocal: Unable to open file '%s' (%s)", path, err)
 	}
 
 	return b, err
@@ -88,8 +88,14 @@ func (c localDriver) List(path string) ([]gofile.File, error) {
 	return foundFiles, nil
 }
 
-func (c localDriver) Write(path string, contents []byte) error {
-	err := ioutil.WriteFile(c.absPath(path), contents, 0644)
+func (c localDriver) Write(path string, data io.Reader) error {
+	contents, err := ioutil.ReadAll(data)
+
+	if err != nil {
+		return fmt.Errorf("golocal: Could not read data for writing to path %s (%s)", path, err)
+	}
+
+	err = ioutil.WriteFile(c.absPath(path), contents, 0644)
 
 	if err != nil {
 		return fmt.Errorf("golocal: Could not write file '%s' (%s)", path, err)
@@ -117,8 +123,8 @@ func (c localDriver) Copy(path, newPath string) error {
 	return d.Close()
 }
 
-func (c localDriver) Update(path string, contents []byte) error {
-	return c.Write(path, contents)
+func (c localDriver) Update(path string, data io.Reader) error {
+	return c.Write(path, data)
 }
 
 func (c localDriver) Rename(path, newPath string) error {
